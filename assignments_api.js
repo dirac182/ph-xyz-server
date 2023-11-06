@@ -2,16 +2,17 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
+import axios from "axios";
 
 const app = express();
 const port = 5000;
 app.use(cors());
 
 // Database Stuff
-mongoose.connect("mongodb+srv://admin-bus:admin-pass@cluster0.tlilvc7.mongodb.net/assignmentsDB");
+mongoose.connect(process.env.DB_PATH);
 
 const tqPairSchema = new mongoose.Schema({
-    id: {
+    topicId: {
       type: Number,
       required: true
     },
@@ -25,14 +26,24 @@ const tqPairSchema = new mongoose.Schema({
     }
   });
 
-  const assignmentSchema = new mongoose.Schema({
-    assignmentID: {
-      type: String,
-      unique: true,  // if you want it to be unique
-      required: true
+  const questionSetSchema = new mongoose.Schema({
+    topicId: {
+        type: Number,
+        required: true,
     },
+    topic: {
+        type: String,
+        required: true
+    },
+    QIDArray: {
+        type: [String],
+        required: true
+    }
+});
+
+  const assignmentSchema = new mongoose.Schema({
     userID: {
-      type: Number,
+      type: String,
       required: true
     },
     assignmentName: {  // fixed the typo here
@@ -51,6 +62,24 @@ const tqPairSchema = new mongoose.Schema({
     },
     dueDate: {
       type: Date,
+      required: true
+    },
+    questionSet: [questionSetSchema],
+    timeHr: {
+      type: Number,
+      required: true,
+    },
+    timeMin: {
+      type: Number,
+      required: true,
+    },
+    isPm: {
+      type: Boolean,
+      required: true,
+    },
+    classes: {
+      type: [String],
+      required: true
     }
   });
 
@@ -61,10 +90,10 @@ app.use(bodyParser.json());
 
 app.get("/get/assignments", async (req,res) => {
     const userId = req.query.userId;
-
     Assignment.find({userID: userId})
     .then ((assignments) => {
         console.log("fetch Assignments")
+        res.status(200);
         res.json(assignments);
     })
     .catch((error) => {
@@ -75,7 +104,7 @@ app.get("/get/assignments", async (req,res) => {
   app.get("/get/assignmentById", async (req,res) => {
     const userId = req.query.userId;
     const assignmentId = req.query.assignmentId;
-    Assignment.findOne({userID: userId, assignmentID: assignmentId})
+    Assignment.findOne({userID: userId, _id: assignmentId})
     .then ((assignment) => {
         console.log("GetByID", userId, assignmentId)
         res.json(assignment);
@@ -86,21 +115,32 @@ app.get("/get/assignments", async (req,res) => {
   })
 
   app.post("/create/assignment", async (req,res) => {
-    console.log("Assignment Created.")
-    var assignmentID = "id" + Math.random().toString(16).slice(2)
+    console.log(req.body.classes)
     const newAssignment = new Assignment({
-        assignmentID,
         userID: req.body.userID,
         assignmentName: req.body.name,
         tqPair: req.body.tqPair,
         quiz: req.body.quiz,
         timeLimit: req.body.timeLimit,
         dueDate: req.body.dueDate,
-        status: req.body.status
+        timeHr: req.body.timeHr,
+        timeMin: req.body.timeMin,
+        isPm: req.body.isPm,
+        status: req.body.status,
+        questionSet: req.body.questionSet,
+        classes: req.body.classes
     });
-    newAssignment.save();
-    console.log("Assignment Created")
-    res.json(newAssignment);
+    console.log(newAssignment)
+    newAssignment.save()
+    .then((doc) => {
+      console.log(doc)
+      res.status(200).send(doc._id);
+    })
+    .catch((error) => {
+      console.log(error)
+      res.status(404).json( error);
+    })
+    
   })
 
   app.post("/edit/assignment", async (req,res) => {
@@ -112,32 +152,46 @@ app.get("/get/assignments", async (req,res) => {
         quiz: req.body.quiz,
         timeLimit: req.body.timeLimit,
         dueDate: req.body.dueDate,
-        status: req.body.status
+        timeHr: req.body.timeHr,
+        timeMin: req.body.timeMin,
+        isPm: req.body.isPm,
+        status: req.body.status,
+        questionSet: req.body.questionSet,
+        classes: req.body.classes
     };
     Assignment.findOneAndUpdate(
-      {assignmentID:aID, userID: uID}, 
+      {_id:aID, userID: uID}, 
       {$set: updatedData},
       { new: true, useFindAndModify: false })
       .then((doc)=> {
-          console.log("Updated document:", doc);
+          res.status(200).send( doc);
         })
       .catch((error)=> {
           console.error("Error updating document:", error);
+          res.status(500).send("Internal Server Error");
         })
     })
 
     app.post("/delete/assignment", (req,res) => {
       const uID = req.query.userID;
       const aID = req.query.assignmentID;
-      Assignment.findOneAndDelete({ assignmentID: aID, userID: uID })
-      .then(()=> {
-        console.log("Assignment deleted");
+      Assignment.findOneAndDelete({ _id: aID, userID: uID })
+      .then((doc)=> {
+        console.log("Assignment deleted", doc);
+        axios.post('http://localhost:5003/classes/update_on_assignment_delete', {
+                        userId: uID,
+                        assignmentId: aID,
+                        classesToUpdate: doc.classes
+                        })
+        res.status(200).send("Assignment deleted successfully");
       })
       .catch((error)=> {
         console.log("Error deleting Assignment:", error);
+        res.status(500).send("Internal Server Error");
       })
     })
 
 app.listen(port, () =>{
-    console.log(`Api server has successfully started on port ${port}.`)
+    console.log(`Assignments Api server has successfully started on port ${port}.`)
 })
+export default Assignment;
