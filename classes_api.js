@@ -10,7 +10,7 @@ import axios from "axios";
 
 const nanoid = customAlphabet('123456789abcdefghijklmnopqrstuvwxyz', 6)
 const app = express();
-const port = 5003;
+const port = process.env.PORT || 5003;
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
@@ -258,7 +258,7 @@ app.delete('/classes/delete_teacher_classroom', async (req, res) => {
     }
 });
 
-app.listen(process.env.PORT, () =>{
+app.listen(port, () =>{
     console.log(`Classes Api server has successfully started on port ${port}.`)
 })
 

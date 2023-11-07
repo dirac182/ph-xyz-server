@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 const app = express();
-const port = 5001;
+const port = process.env.PORT || 5001;
 app.use(cors());
 
 mongoose.connect(process.env.DB_PATH);
@@ -169,7 +169,7 @@ app.get("/get/questionByTopic", async (req,res) => {
     res.status(200).json(questionArray)
   })
 
-app.listen(process.env.PORT, () =>{
+app.listen(port, () =>{
     console.log(`Questions Api server has successfully started on port ${port}.`)
 })
 

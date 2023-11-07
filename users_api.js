@@ -21,7 +21,7 @@ const question = Question();
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6)
 const app = express();
-const port = 5002;
+const port = process.env.PORT || 5002;
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
@@ -280,7 +280,7 @@ app.post("/user/update_student_assignment_info", async (req, res) => {
     }
 });
 
-app.listen(process.env.PORT, () =>{
+app.listen(port, () =>{
     console.log(`Users Api server has successfully started on port ${port}.`)
 })
 
