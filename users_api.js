@@ -104,14 +104,14 @@ userSchema.plugin(findOrCreate);
 const User = mongoose.model("User", userSchema);
 
 passport.serializeUser((user, cb) => {
-    console.log("Serialized User")
+    console.log("Serialized User", user)
     cb(null, user.id);
 });
 
 passport.deserializeUser((id, cb) => {
-    console.log("deserialized User")
     User.findById(id)
     .then(user => {
+        console.log("deserialized User",user)
         cb(null,user);
     });
   });
@@ -184,7 +184,7 @@ app.get("/user/logout", (req,res) => {
 });
 
 app.get("/user/get_current_user", (req,res) => {
-    console.log("sent User:",req);
+    // console.log("sent User:",req);
     res.send(req.user);
 });
 
