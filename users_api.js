@@ -12,29 +12,38 @@ import 'dotenv/config'
 import { customAlphabet } from 'nanoid';
 import axios from 'axios';
 import Classes from './classes_api.js';
+import assignmentsRouter from "./assignments_api.js";
+import questionsRouter from "./questions_api.js";
+import classesRouter from "./classes_api.js"
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6)
-const usersRouter = express.Router();
+const app = express();
 const port = process.env.PORT || 5002;
-usersRouter.use(cors({
+app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
 }));
 
-usersRouter.use(bodyParser.urlencoded({
+app.use(bodyParser.urlencoded({
     extended: true
 }));
-usersRouter.use(bodyParser.json());
+app.use(bodyParser.json());
 
-usersRouter.use(cookieSession({
+app.use(cookieSession({
+    secure: false,
+    httpOnly: true,
     maxAge: 30*24*60*60*1000,
     keys: [process.env.COOKIE_KEY]
 }));
 
-usersRouter.use(passport.initialize());
-usersRouter.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose.connect(process.env.DB_PATH);
+
+app.use(assignmentsRouter);
+app.use(questionsRouter);
+app.use(classesRouter);
 
 const studentQuestionSetSchema = new mongoose.Schema({
     question: {
@@ -153,7 +162,7 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-usersRouter.get("/auth/google", (req,res,done) => {
+app.get("/auth/google", (req,res,done) => {
     const data = JSON.stringify(req.query)
     passport.authenticate("google", {
         scope: ["profile","email"], 
@@ -161,7 +170,7 @@ usersRouter.get("/auth/google", (req,res,done) => {
      })(req,res,done);
 })
 
-usersRouter.get('/auth/google/callback', 
+app.get('/auth/google/callback', 
   passport.authenticate('google'), (req, res) => {
     // Successful authentication, redirect home.
     console.log("Auth")
@@ -169,17 +178,17 @@ usersRouter.get('/auth/google/callback',
     res.redirect('http://localhost:3000/');
   });
 
-  usersRouter.get("/user/logout", (req,res) => {
+  app.get("/user/logout", (req,res) => {
     req.logout();
     res.redirect('http://localhost:3000/');
 });
 
-usersRouter.get("/user/get_current_user", (req,res) => {
+app.get("/user/get_current_user", (req,res) => {
     console.log("sent User:",req);
     res.send(req.user);
 });
 
-usersRouter.post("/user/add_class_to_studentClasses", async (req,res) => {
+app.post("/user/add_class_to_studentClasses", async (req,res) => {
     const { userId, classId } = req.body;
     try {
         // Update the user by adding the class ObjectId to the studentClasses array
@@ -194,7 +203,7 @@ usersRouter.post("/user/add_class_to_studentClasses", async (req,res) => {
     }
 })
 
-usersRouter.get("/user/fetch_student_assignment_info", async (req, res) => {
+app.get("/user/fetch_student_assignment_info", async (req, res) => {
     const { userId, assignmentId } = req.query;
     console.log(userId,assignmentId);
     try {
@@ -212,7 +221,7 @@ usersRouter.get("/user/fetch_student_assignment_info", async (req, res) => {
     }
 });
 
-usersRouter.post("/user/initialize_student_assignment_info", async (req, res) => {
+app.post("/user/initialize_student_assignment_info", async (req, res) => {
     const { userId, assignmentId } = req.query;
     const assignmentInfo = req.body.assignmentInfo;
     console.log(assignmentInfo)
@@ -245,7 +254,7 @@ usersRouter.post("/user/initialize_student_assignment_info", async (req, res) =>
     }
 });
 
-usersRouter.post("/user/update_student_assignment_info", async (req, res) => {
+app.post("/user/update_student_assignment_info", async (req, res) => {
     const { userId, assignmentId } = req.query;
     const updatedStudentQuestionSet = req.body.updatedAssignmentInfo;
     const updatedGrade = req.body.updatedGrade;
@@ -277,4 +286,8 @@ usersRouter.post("/user/update_student_assignment_info", async (req, res) => {
     }
 });
 
-export default usersRouter;
+app.listen(port, () =>{
+    console.log(`Classes Api server has successfully started on port ${port}.`)
+})
+
+export default app;

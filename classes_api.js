@@ -3,30 +3,23 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import { customAlphabet } from 'nanoid';
-import assignmentsRouter from "./assignments_api.js";
-import questionsRouter from "./questions_api.js";
-import usersRouter from "./users_api.js";
 import axios from "axios";
 
 const nanoid = customAlphabet('123456789abcdefghijklmnopqrstuvwxyz', 6)
-const app = express();
+const classesRouter = express.Router();
 const port = process.env.PORT || 5003;
 
-app.use(cors({
+classesRouter.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
 }));
-app.use(bodyParser.urlencoded({
+classesRouter.use(bodyParser.urlencoded({
     extended: true
 }));
-app.use(bodyParser.json());
+classesRouter.use(bodyParser.json());
 
 // Database Stuff
 mongoose.connect(process.env.DB_PATH);
-
-app.use(assignmentsRouter);
-app.use(questionsRouter);
-app.use(usersRouter);
 
 const classesSchema = new mongoose.Schema({
     joinCode: {
@@ -54,7 +47,7 @@ const classesSchema = new mongoose.Schema({
 
 const Classes = mongoose.model('Class', classesSchema);
 
-app.post("/classes/update_classroom_assignment", async (req,res) => {
+classesRouter.post("/classes/update_classroom_assignment", async (req,res) => {
     const userId = req.query.userId;
     const assignmentId = req.body.assignmentId;
     const assignedClasses = req.body.assignedClasses
@@ -85,7 +78,7 @@ app.post("/classes/update_classroom_assignment", async (req,res) => {
     }
 })
 
-app.post("/classes/update_on_assignment_delete", async (req, res) => {
+classesRouter.post("/classes/update_on_assignment_delete", async (req, res) => {
     const userId = req.body.userId;
     const assignmentId = req.body.assignmentId;
     const classesToUpdate = req.body.classesToUpdate;
@@ -106,7 +99,7 @@ app.post("/classes/update_on_assignment_delete", async (req, res) => {
     }
 });
 
-app.post("/classes/create_teacher_classroom", async (req,res) => {
+classesRouter.post("/classes/create_teacher_classroom", async (req,res) => {
     console.log("Classroom created.")
     const userId = req.query.userId;
     const className = req.body.className;
@@ -123,7 +116,7 @@ app.post("/classes/create_teacher_classroom", async (req,res) => {
     
 })
 
-app.get('/classes/get_teacher_classrooms', async (req, res) => {
+classesRouter.get('/classes/get_teacher_classrooms', async (req, res) => {
     const userId = req.query.userId;
     try {
         // Find the user by userId
@@ -139,7 +132,7 @@ app.get('/classes/get_teacher_classrooms', async (req, res) => {
     }
 });
 
-app.get('/classes/get_student_classrooms', async (req, res) => {
+classesRouter.get('/classes/get_student_classrooms', async (req, res) => {
     const classesArray = req.query.classesArray.split(",");
     try {
         const classes = await Classes.find({ _id: { $in: classesArray } }).populate('assignments').populate("teacherId");
@@ -153,7 +146,7 @@ app.get('/classes/get_student_classrooms', async (req, res) => {
     }
 });
 
-app.get('/classes/get_class_by_id', async (req, res) => {
+classesRouter.get('/classes/get_class_by_id', async (req, res) => {
     const classId = req.query.classId;
     try {
         // Find the class by classId and populate the students array
@@ -169,7 +162,7 @@ app.get('/classes/get_class_by_id', async (req, res) => {
     }
 });
 
-app.post("/classes/add_student_to_classroom", async (req,res) => {
+classesRouter.post("/classes/add_student_to_classroom", async (req,res) => {
     const { userId, classCode } = req.body;
     try {
         // Find the class by classCode
@@ -199,7 +192,7 @@ app.post("/classes/add_student_to_classroom", async (req,res) => {
     }
 })
 
-app.post("/classes/check_valid_join_code", (req,res) => {
+classesRouter.post("/classes/check_valid_join_code", (req,res) => {
     const userInput = req.body.userInput;
     console.log(userInput)
     Classes.findOne({joinCode:userInput})
@@ -216,7 +209,7 @@ app.post("/classes/check_valid_join_code", (req,res) => {
     })
 })
 
-app.delete('/classes/delete_teacher_classroom', async (req, res) => {
+classesRouter.delete('/classes/delete_teacher_classroom', async (req, res) => {
     const { userId, classId } = req.query;
     console.log(userId, classId)
     try {
@@ -234,8 +227,4 @@ app.delete('/classes/delete_teacher_classroom', async (req, res) => {
     }
 });
 
-app.listen(port, () =>{
-    console.log(`Classes Api server has successfully started on port ${port}.`)
-})
-
-export default Classes;
+export default classesRouter;
