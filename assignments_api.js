@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 assignmentsRouter.use(cors());
 
 // Database Stuff
-mongoose.connect(process.env.DB_PATH);
+// mongoose.connect(process.env.DB_PATH);
 
 const tqPairSchema = new mongoose.Schema({
     topicId: {
@@ -191,4 +191,3 @@ assignmentsRouter.get("/get/assignments", async (req,res) => {
       })
     })
 export default assignmentsRouter;
-module.exports = assignmentsRouter;

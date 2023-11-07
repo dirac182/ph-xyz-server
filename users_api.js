@@ -11,13 +11,7 @@ import cookieSession from 'cookie-session';
 import 'dotenv/config'
 import { customAlphabet } from 'nanoid';
 import axios from 'axios';
-import Assignment from "./assignments_api.js";
 import Classes from './classes_api.js';
-import Question from './questions_api.js';
-
-const assignment = Assignment();
-const question = Question();
-// const classes = Classes();
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6)
 const usersRouter = express.Router();
@@ -281,4 +275,3 @@ usersRouter.post("/user/update_student_assignment_info", async (req, res) => {
 });
 
 export default usersRouter;
-module.exports = usersRouter;
