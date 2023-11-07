@@ -95,10 +95,12 @@ userSchema.plugin(findOrCreate);
 const User = mongoose.model("User", userSchema);
 
 passport.serializeUser((user, cb) => {
+    console.log("Serialized User")
     cb(null, user.id);
 });
 
 passport.deserializeUser((id, cb) => {
+    console.log("deserialized User")
     User.findById(id)
     .then(user => {
         cb(null,user);
