@@ -37,7 +37,7 @@ app.use(cookieSession({
     keys: [process.env.COOKIE_KEY]
 }));
 
-app.set('trust proxy', 1);
+app.set('trust proxy');
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -108,7 +108,6 @@ const User = mongoose.model("User", userSchema);
 
 passport.serializeUser((user, cb) => {
     console.log("Serialized User", user)
-    console.log("Cookie Key",process.env.COOKIE_KEY)
     cb(null, user.id);
 });
 
