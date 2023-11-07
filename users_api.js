@@ -175,7 +175,7 @@ usersRouter.get('/auth/google/callback',
 });
 
 usersRouter.get("/user/get_current_user", (req,res) => {
-    console.log("sent User:",req.user);
+    console.log("sent User:",req);
     res.send(req.user);
 });
 
