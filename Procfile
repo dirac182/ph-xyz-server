@@ -1,1 +1,1 @@
-web: nodemon classes_api.js
+./bin/www npm start
