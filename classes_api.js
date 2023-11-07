@@ -3,9 +3,9 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import { customAlphabet } from 'nanoid';
-import {assignmentsRouter, Assignment} from "./assignments_api.js";
-import {questionsRouter, Question }from "./questions_api.js";
-import {usersRouter, User} from "./users_api.js";
+import {assignmentsRouter} from "./assignments_api.js";
+import {questionsRouter}from "./questions_api.js";
+import {usersRouter} from "./users_api.js";
 import axios from "axios";
 
 const nanoid = customAlphabet('123456789abcdefghijklmnopqrstuvwxyz', 6)
@@ -27,9 +27,9 @@ app.use(bodyParser.json());
 
 // Database Stuff
 mongoose.connect(process.env.DB_PATH);
-const user = User();
-const assignment = Assignment();
-const question = Question();
+// const user = User();
+// const assignment = Assignment();
+// const question = Question();
 
 const classesSchema = new mongoose.Schema({
     joinCode: {
