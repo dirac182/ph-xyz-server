@@ -21,7 +21,7 @@ const question = Question();
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6)
 const app = express();
-const port =  5002;
+const port = process.env.PORT || 5002;
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
