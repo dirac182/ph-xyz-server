@@ -178,7 +178,7 @@ app.get('/auth/google/callback',
     res.redirect('http://localhost:3000/');
   });
 
-  app.get("/user/logout", (req,res) => {
+app.get("/user/logout", (req,res) => {
     req.logout();
     res.redirect('http://localhost:3000/');
 });

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node classes_api.js users_api.js questions_api.js assignments_api.js"
+    "start": "node users_api.js"
   },
   "keywords": [],
   "author": "",
