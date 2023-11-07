@@ -258,7 +258,7 @@ app.delete('/classes/delete_teacher_classroom', async (req, res) => {
     }
 });
 
-app.listen(process.env.PORT || port, () =>{
+app.listen(process.env.PORT, () =>{
     console.log(`Classes Api server has successfully started on port ${port}.`)
 })
 

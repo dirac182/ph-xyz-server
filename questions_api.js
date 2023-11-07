@@ -169,7 +169,7 @@ app.get("/get/questionByTopic", async (req,res) => {
     res.status(200).json(questionArray)
   })
 
-app.listen(process.env.PORT || port, () =>{
+app.listen(process.env.PORT, () =>{
     console.log(`Questions Api server has successfully started on port ${port}.`)
 })
 

@@ -280,7 +280,7 @@ app.post("/user/update_student_assignment_info", async (req, res) => {
     }
 });
 
-app.listen(process.env.PORT ||port, () =>{
+app.listen(process.env.PORT, () =>{
     console.log(`Users Api server has successfully started on port ${port}.`)
 })
 
