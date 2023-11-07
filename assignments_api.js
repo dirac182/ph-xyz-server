@@ -89,7 +89,7 @@ const Assignment = mongoose.model("Assignment", assignmentSchema);
 // Middleware
 assignmentsRouter.use(bodyParser.json());
 
-assignmentsRouter.get("/get/assignments", async (req,res) => {
+assignmentsRouter.get("/assignments/get_assignments", async (req,res) => {
     const userId = req.query.userId;
     Assignment.find({userID: userId})
     .then ((assignments) => {
@@ -102,7 +102,7 @@ assignmentsRouter.get("/get/assignments", async (req,res) => {
     })
   })
 
-  assignmentsRouter.get("/get/assignmentById", async (req,res) => {
+  assignmentsRouter.get("/assignments/get_assignment_by_id", async (req,res) => {
     const userId = req.query.userId;
     const assignmentId = req.query.assignmentId;
     Assignment.findOne({userID: userId, _id: assignmentId})
@@ -115,7 +115,7 @@ assignmentsRouter.get("/get/assignments", async (req,res) => {
     })
   })
 
-  assignmentsRouter.post("/create/assignment", async (req,res) => {
+  assignmentsRouter.post("/assignments/create_assignment", async (req,res) => {
     console.log(req.body.classes)
     const newAssignment = new Assignment({
         userID: req.body.userID,
@@ -144,7 +144,7 @@ assignmentsRouter.get("/get/assignments", async (req,res) => {
     
   })
 
-  assignmentsRouter.post("/edit/assignment", async (req,res) => {
+  assignmentsRouter.post("/assignments/edit_assignment", async (req,res) => {
     const uID = req.query.userID;
     const aID = req.query.assignmentID;
     const updatedData = {
@@ -173,7 +173,7 @@ assignmentsRouter.get("/get/assignments", async (req,res) => {
         })
     })
 
-    assignmentsRouter.post("/delete/assignment", (req,res) => {
+    assignmentsRouter.post("/assignments/delete_assignment", (req,res) => {
       const uID = req.query.userID;
       const aID = req.query.assignmentID;
       Assignment.findOneAndDelete({ _id: aID, userID: uID })

@@ -135,7 +135,7 @@ questionsRouter.use(bodyParser.json());
 //         console.error("Error saving questions:", err);
 //     });
 
-questionsRouter.get("/get/AllQuestionIds", async (req,res) => {
+questionsRouter.get("/questions/get_all_question_ids", async (req,res) => {
     Question.find({}).select("QID")
     .then((QIDs) => {
         console.log("QIDs successfully fetched.");
@@ -147,7 +147,7 @@ questionsRouter.get("/get/AllQuestionIds", async (req,res) => {
     })
 })
 
-questionsRouter.get("/get/questionByTopic", async (req,res) => {
+questionsRouter.get("/questions/get_question_by_topic", async (req,res) => {
     const topicId = req.query.topicId;
     Question.findOne({QTopicPrimary: topicId})
     .then ((question) => {
@@ -162,7 +162,7 @@ questionsRouter.get("/get/questionByTopic", async (req,res) => {
     })
   })
 
-  questionsRouter.get("/get/questionSetByIds", async (req,res) => {
+  questionsRouter.get("/questions/get_question_set_by_ids", async (req,res) => {
     const idsArray = req.query.IdSet;
     const questionIds = idsArray.split(',');
     const questionArray = await Question.find({"QID": {$in: questionIds}}).then(questions => {return questions})

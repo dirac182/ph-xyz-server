@@ -24,9 +24,9 @@ app.use(bodyParser.json());
 // Database Stuff
 mongoose.connect(process.env.DB_PATH);
 
-app.use("./assignmnets_api.js", assignmentsRouter);
-app.use("./questions_api.js", questionsRouter);
-app.use("./users_api.js", usersRouter);
+app.use("/assignmnets", assignmentsRouter);
+app.use("/questions", questionsRouter);
+app.use("/user", usersRouter);
 
 const classesSchema = new mongoose.Schema({
     joinCode: {
