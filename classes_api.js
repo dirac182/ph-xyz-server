@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import { customAlphabet } from 'nanoid';
-import User from "./users_api.js";
 import {assignmentsRouter, Assignment} from "./assignments_api.js";
 import {questionsRouter, Question }from "./questions_api.js";
 import {usersRouter, User} from "./users_api.js";
