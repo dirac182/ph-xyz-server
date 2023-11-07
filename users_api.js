@@ -116,7 +116,7 @@ passport.use(User.createStrategy());
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "http://localhost:5002/auth/google/callback",
+    callbackURL: "https://phzyxserver-a2204ae0f213.herokuapp.com/auth/google/callback",
     passReqToCallback: true
   },
   function(req, accessToken, refreshToken, profile, done) {
