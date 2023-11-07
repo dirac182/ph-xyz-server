@@ -173,7 +173,7 @@ app.get("/auth/google", (req,res,done) => {
 app.get('/auth/google/callback', 
   passport.authenticate('google'), (req, res) => {
     // Successful authentication, redirect home.
-    console.log("Auth")
+    console.log("Auth", req.user)
     const role = req.query.state;
     res.redirect('http://localhost:3000/');
   });
@@ -185,7 +185,7 @@ app.get("/user/logout", (req,res) => {
 
 app.get("/user/get_current_user", (req,res) => {
     // console.log("sent User:",req);
-    res.send(req.user);
+    res.send(req);
 });
 
 app.post("/user/add_class_to_studentClasses", async (req,res) => {
