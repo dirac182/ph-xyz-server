@@ -121,7 +121,7 @@ passport.use(new GoogleStrategy({
     User.findOne({ googleId: profile.id }).then(existingUser => {
         if (existingUser) {
           // we already have a record with the given profile ID
-        //   console.log(existingUser);
+          console.log(existingUser);
           done(null, existingUser);
         } else {
           // we don't have a user record with this ID, make a new record!
@@ -162,6 +162,7 @@ usersRouter.get("/auth/google", (req,res,done) => {
 usersRouter.get('/auth/google/callback', 
   passport.authenticate('google'), (req, res) => {
     // Successful authentication, redirect home.
+    console.log("Auth")
     const role = req.query.state;
     res.redirect('http://localhost:3000/');
   });
@@ -172,7 +173,7 @@ usersRouter.get('/auth/google/callback',
 });
 
 usersRouter.get("/user/get_current_user", (req,res) => {
-    // console.log("sent User:",req.user);
+    console.log("sent User:",req.user);
     res.send(req.user);
 });
 
