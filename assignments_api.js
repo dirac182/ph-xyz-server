@@ -190,5 +190,5 @@ assignmentsRouter.get("/get/assignments", async (req,res) => {
         res.status(500).send("Internal Server Error");
       })
     })
-export default Assignment;
+export default assignmentsRouter;
 module.exports = assignmentsRouter;

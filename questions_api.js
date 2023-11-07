@@ -169,5 +169,5 @@ questionsRouter.get("/get/questionByTopic", async (req,res) => {
     res.status(200).json(questionArray)
   })
 
-export default Question;
+export default questionsRouter;
 module.exports = questionsRouter;

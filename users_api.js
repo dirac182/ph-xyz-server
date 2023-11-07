@@ -280,5 +280,5 @@ usersRouter.post("/user/update_student_assignment_info", async (req, res) => {
     }
 });
 
-export default User;
+export default usersRouter;
 module.exports = usersRouter;
