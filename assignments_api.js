@@ -191,7 +191,7 @@ app.get("/get/assignments", async (req,res) => {
       })
     })
 
-app.listen(port, () =>{
+app.listen(process.env.PORT || port, () =>{
     console.log(`Assignments Api server has successfully started on port ${port}.`)
 })
 export default Assignment;
