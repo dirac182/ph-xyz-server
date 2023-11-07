@@ -2,12 +2,13 @@ import express, { Router } from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
+import 'dotenv/config'
 
 const questionsRouter = express.Router();
 const port = process.env.PORT || 5001;
 questionsRouter.use(cors());
 
-// mongoose.connect(process.env.DB_PATH);
+mongoose.connect(process.env.DB_PATH);
 
 const questionSchema = new mongoose.Schema({
     QID: {
