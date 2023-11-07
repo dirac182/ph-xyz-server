@@ -20,25 +20,25 @@ const question = Question();
 // const classes = Classes();
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6)
-const app = express();
+const usersRouter = express.Router();
 const port = process.env.PORT || 5002;
-app.use(cors({
+usersRouter.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
 }));
 
-app.use(bodyParser.urlencoded({
+usersRouter.use(bodyParser.urlencoded({
     extended: true
 }));
-app.use(bodyParser.json());
+usersRouter.use(bodyParser.json());
 
-app.use(cookieSession({
+usersRouter.use(cookieSession({
     maxAge: 30*24*60*60*1000,
     keys: [process.env.COOKIE_KEY]
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+usersRouter.use(passport.initialize());
+usersRouter.use(passport.session());
 
 mongoose.connect(process.env.DB_PATH);
 
@@ -157,7 +157,7 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-app.get("/auth/google", (req,res,done) => {
+usersRouter.get("/auth/google", (req,res,done) => {
     const data = JSON.stringify(req.query)
     passport.authenticate("google", {
         scope: ["profile","email"], 
@@ -165,24 +165,24 @@ app.get("/auth/google", (req,res,done) => {
      })(req,res,done);
 })
 
-app.get('/auth/google/callback', 
+usersRouter.get('/auth/google/callback', 
   passport.authenticate('google'), (req, res) => {
     // Successful authentication, redirect home.
     const role = req.query.state;
     res.redirect('http://localhost:3000/');
   });
 
-app.get("/user/logout", (req,res) => {
+  usersRouter.get("/user/logout", (req,res) => {
     req.logout();
     res.redirect('http://localhost:3000/');
 });
 
-app.get("/user/get_current_user", (req,res) => {
+usersRouter.get("/user/get_current_user", (req,res) => {
     // console.log("sent User:",req.user);
     res.send(req.user);
 });
 
-app.post("/user/add_class_to_studentClasses", async (req,res) => {
+usersRouter.post("/user/add_class_to_studentClasses", async (req,res) => {
     const { userId, classId } = req.body;
     try {
         // Update the user by adding the class ObjectId to the studentClasses array
@@ -197,7 +197,7 @@ app.post("/user/add_class_to_studentClasses", async (req,res) => {
     }
 })
 
-app.get("/user/fetch_student_assignment_info", async (req, res) => {
+usersRouter.get("/user/fetch_student_assignment_info", async (req, res) => {
     const { userId, assignmentId } = req.query;
     console.log(userId,assignmentId);
     try {
@@ -215,7 +215,7 @@ app.get("/user/fetch_student_assignment_info", async (req, res) => {
     }
 });
 
-app.post("/user/initialize_student_assignment_info", async (req, res) => {
+usersRouter.post("/user/initialize_student_assignment_info", async (req, res) => {
     const { userId, assignmentId } = req.query;
     const assignmentInfo = req.body.assignmentInfo;
     console.log(assignmentInfo)
@@ -248,7 +248,7 @@ app.post("/user/initialize_student_assignment_info", async (req, res) => {
     }
 });
 
-app.post("/user/update_student_assignment_info", async (req, res) => {
+usersRouter.post("/user/update_student_assignment_info", async (req, res) => {
     const { userId, assignmentId } = req.query;
     const updatedStudentQuestionSet = req.body.updatedAssignmentInfo;
     const updatedGrade = req.body.updatedGrade;
@@ -281,3 +281,4 @@ app.post("/user/update_student_assignment_info", async (req, res) => {
 });
 
 export default User;
+module.exports = usersRouter;

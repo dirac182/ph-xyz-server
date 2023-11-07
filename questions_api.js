@@ -1,11 +1,11 @@
-import express from "express";
+import express, { Router } from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 
-const app = express();
+const questionsRouter = express.Router();
 const port = process.env.PORT || 5001;
-app.use(cors());
+questionsRouter.use(cors());
 
 mongoose.connect(process.env.DB_PATH);
 
@@ -78,7 +78,7 @@ const questionSchema = new mongoose.Schema({
   const Question = mongoose.model("Question", questionSchema);
 
   // Middleware
-app.use(bodyParser.json());
+questionsRouter.use(bodyParser.json());
 
 // const giantList = [
 //   {
@@ -134,7 +134,7 @@ app.use(bodyParser.json());
 //         console.error("Error saving questions:", err);
 //     });
 
-app.get("/get/AllQuestionIds", async (req,res) => {
+questionsRouter.get("/get/AllQuestionIds", async (req,res) => {
     Question.find({}).select("QID")
     .then((QIDs) => {
         console.log("QIDs successfully fetched.");
@@ -146,7 +146,7 @@ app.get("/get/AllQuestionIds", async (req,res) => {
     })
 })
 
-app.get("/get/questionByTopic", async (req,res) => {
+questionsRouter.get("/get/questionByTopic", async (req,res) => {
     const topicId = req.query.topicId;
     Question.findOne({QTopicPrimary: topicId})
     .then ((question) => {
@@ -161,7 +161,7 @@ app.get("/get/questionByTopic", async (req,res) => {
     })
   })
 
-  app.get("/get/questionSetByIds", async (req,res) => {
+  questionsRouter.get("/get/questionSetByIds", async (req,res) => {
     const idsArray = req.query.IdSet;
     const questionIds = idsArray.split(',');
     const questionArray = await Question.find({"QID": {$in: questionIds}}).then(questions => {return questions})
@@ -170,3 +170,4 @@ app.get("/get/questionByTopic", async (req,res) => {
   })
 
 export default Question;
+module.exports = questionsRouter;

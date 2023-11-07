@@ -4,13 +4,19 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { customAlphabet } from 'nanoid';
 import User from "./users_api.js";
-import Assignment from "./assignments_api.js";
-// import Question from "./questions_api.js";
+import {assignmentsRouter, Assignment} from "./assignments_api.js";
+import {questionsRouter, Question }from "./questions_api.js";
+import {usersRouter, User} from "./users_api.js";
 import axios from "axios";
 
 const nanoid = customAlphabet('123456789abcdefghijklmnopqrstuvwxyz', 6)
 const app = express();
 const port = process.env.PORT || 5003;
+
+app.use("./assignmnets_api.js", assignmentsRouter);
+app.use("./questions_api.js", questionsRouter);
+app.use("./users_api.js", usersRouter);
+
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
@@ -24,32 +30,7 @@ app.use(bodyParser.json());
 mongoose.connect(process.env.DB_PATH);
 const user = User();
 const assignment = Assignment();
-// const question = Question();
-
-const studentQuestionSetSchema = new mongoose.Schema({
-    // question: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Question',
-    // },
-    selectedAnswerIndex: Number,
-    isCorrect: Boolean,
-    isFlagged: Boolean,
-    isFocused: Boolean
-});
-
-const studentAssignmentInfoSchema = new mongoose.Schema({
-    studentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    assignmentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Assignment',
-        required: true
-    },
-    studentQuestionSet: [studentQuestionSetSchema]
-});
+const question = Question();
 
 const classesSchema = new mongoose.Schema({
     joinCode: {
@@ -73,7 +54,6 @@ const classesSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Assignment'
     }],
-    studentAssignmentInfo: [studentAssignmentInfoSchema]
 });
 
 const Classes = mongoose.model('Class', classesSchema);

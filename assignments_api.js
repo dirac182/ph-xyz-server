@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 import cors from "cors";
 import axios from "axios";
 
-const app = express();
+const assignmentsRouter = express.Router();
 const port = process.env.PORT || 5000;
-app.use(cors());
+assignmentsRouter.use(cors());
 
 // Database Stuff
 mongoose.connect(process.env.DB_PATH);
@@ -86,9 +86,9 @@ const tqPairSchema = new mongoose.Schema({
 const Assignment = mongoose.model("Assignment", assignmentSchema);
 
 // Middleware
-app.use(bodyParser.json());
+assignmentsRouter.use(bodyParser.json());
 
-app.get("/get/assignments", async (req,res) => {
+assignmentsRouter.get("/get/assignments", async (req,res) => {
     const userId = req.query.userId;
     Assignment.find({userID: userId})
     .then ((assignments) => {
@@ -101,7 +101,7 @@ app.get("/get/assignments", async (req,res) => {
     })
   })
 
-  app.get("/get/assignmentById", async (req,res) => {
+  assignmentsRouter.get("/get/assignmentById", async (req,res) => {
     const userId = req.query.userId;
     const assignmentId = req.query.assignmentId;
     Assignment.findOne({userID: userId, _id: assignmentId})
@@ -114,7 +114,7 @@ app.get("/get/assignments", async (req,res) => {
     })
   })
 
-  app.post("/create/assignment", async (req,res) => {
+  assignmentsRouter.post("/create/assignment", async (req,res) => {
     console.log(req.body.classes)
     const newAssignment = new Assignment({
         userID: req.body.userID,
@@ -143,7 +143,7 @@ app.get("/get/assignments", async (req,res) => {
     
   })
 
-  app.post("/edit/assignment", async (req,res) => {
+  assignmentsRouter.post("/edit/assignment", async (req,res) => {
     const uID = req.query.userID;
     const aID = req.query.assignmentID;
     const updatedData = {
@@ -172,7 +172,7 @@ app.get("/get/assignments", async (req,res) => {
         })
     })
 
-    app.post("/delete/assignment", (req,res) => {
+    assignmentsRouter.post("/delete/assignment", (req,res) => {
       const uID = req.query.userID;
       const aID = req.query.assignmentID;
       Assignment.findOneAndDelete({ _id: aID, userID: uID })
@@ -191,3 +191,4 @@ app.get("/get/assignments", async (req,res) => {
       })
     })
 export default Assignment;
+module.exports = assignmentsRouter;
