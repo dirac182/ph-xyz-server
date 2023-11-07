@@ -30,11 +30,14 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.use(cookieSession({
+    sameSite: 'lax',
     secure: false,
     httpOnly: true,
     maxAge: 30*24*60*60*1000,
     keys: [process.env.COOKIE_KEY]
 }));
+
+app.set('trust proxy', 1);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -105,6 +108,7 @@ const User = mongoose.model("User", userSchema);
 
 passport.serializeUser((user, cb) => {
     console.log("Serialized User", user)
+    console.log("Cookie Key",process.env.COOKIE_KEY)
     cb(null, user.id);
 });
 
@@ -173,19 +177,20 @@ app.get("/auth/google", (req,res,done) => {
 app.get('/auth/google/callback', 
   passport.authenticate('google'), (req, res) => {
     // Successful authentication, redirect home.
+    console.log("User in session after auth:", req.session);
     console.log("Auth", req.user)
     const role = req.query.state;
     res.redirect('http://localhost:3000/');
   });
 
+app.get("/user/get_current_user", (req,res) => {
+    // console.log("sent User:",req);
+    res.send(req.user);
+});
+
 app.get("/user/logout", (req,res) => {
     req.logout();
     res.redirect('http://localhost:3000/');
-});
-
-app.get("/user/get_current_user", (req,res) => {
-    // console.log("sent User:",req);
-    res.send(req);
 });
 
 app.post("/user/add_class_to_studentClasses", async (req,res) => {
