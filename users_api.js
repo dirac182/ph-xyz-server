@@ -153,6 +153,8 @@ passport.use(new GoogleStrategy({
   }
 ));
 
+app.set('trust proxy', 1);
+
 usersRouter.get("/auth/google", (req,res,done) => {
     const data = JSON.stringify(req.query)
     passport.authenticate("google", {
