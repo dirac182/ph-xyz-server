@@ -1,1 +1,1 @@
-./bin/www node classes_api.js
+./bin/www npm start
